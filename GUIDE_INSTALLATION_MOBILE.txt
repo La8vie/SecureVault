@@ -1,0 +1,19 @@
+# Comment mettre votre coffre sur votre téléphone
+
+Pour accéder à votre coffre depuis votre téléphone, nous devons le mettre en ligne de manière sécurisée (HTTPS).
+Ne vous inquiétez pas, **vos données restent privées** car le chiffrement se fait AVANT de quitter votre appareil.
+
+## Étape Facile (Netlify Drop)
+
+1.  Ouvrez ce site : [https://app.netlify.com/drop](https://app.netlify.com/drop)
+2.  Prenez le dossier `secure-pass-vault` (qui se trouve dans `C:\Users\PC MARKET\.gemini\antigravity\scratch\`) et glissez-le directment sur la page web de Netlify.
+3.  Attendez quelques secondes. Netlify va vous donner un lien (exemple: `https://vibrant-kalam-12345.netlify.app`).
+4.  Ouvrez ce lien sur votre téléphone.
+
+## Installation (App)
+
+Une fois sur votre téléphone :
+-   **Android (Chrome)** : Appuyez sur les 3 petits points -> "Installer l'application" ou "Ajouter à l'écran d'accueil".
+-   **iPhone (Safari)** : Appuyez sur le bouton Partager (carré avec flèche) -> "Sur l'écran d'accueil".
+
+L'application fonctionnera maintenant comme une vraie appli, même sans internet !

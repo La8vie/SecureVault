@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SecureVault | Coffre-fort & Générateur</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="manifest" href="manifest.json">
+    <script>
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('sw.js')
+                .then(() => console.log('Service Worker Registered'))
+                .catch(err => console.error('SW Error:', err));
+        }
+    </script>
+</head>
+
+<body>
+    <div class="background-shapes">
+        <div class="shape shape-1"></div>
+        <div class="shape shape-2"></div>
+        <div class="shape shape-3"></div>
+    </div>
+
+    <!-- NOTIFICATION CONTAINER -->
+    <div id="notification-area"></div>
+
+    <div class="container">
+        <!-- AUTH SECTION -->
+        <section id="auth-section" class="glass-panel active">
+            <div class="logo-area">
+                <i class="fa-solid fa-shield-halved"></i>
+                <h1>SecureVault</h1>
+            </div>
+            <p class="subtitle">Vos secrets, chiffrés localement.</p>
+
+            <div class="input-group">
+                <label for="master-password">Mot de passe Maître</label>
+                <input type="password" id="master-password" placeholder="Entrez votre clé unique">
+            </div>
+
+            <button id="unlock-btn" class="primary-btn">Déverrouiller / Créer</button>
+            <button id="reset-vault-btn" class="secondary-btn hidden" style="margin-top: 15px; border-color: #ff3b30; color: #ff3b30;">Supprimer et Créer un nouveau coffre</button>
+            <p class="hint">Si c'est votre première visite, ce mot de passe servira à créer votre coffre. Ne l'oubliez pas !</p>
+            <a href="#" id="forgot-password-link" class="link-btn hidden">Mot de passe oublié ?</a>
+        </section>
+
+        <!-- RECOVERY INIT SECTION (Display Code) -->
+        <section id="recovery-init-section" class="glass-panel hidden">
+            <div class="logo-area">
+                <i class="fa-solid fa-triangle-exclamation"
+                    style="background: linear-gradient(135deg, #ff9966, #ff5e62); -webkit-background-clip: text; -webkit-text-fill-color: transparent;"></i>
+                <h1>Code de Secours</h1>
+            </div>
+            <p class="subtitle">Ce code est votre <strong>SEUL</strong> moyen de récupérer votre compte si vous perdez
+                votre mot de passe.</p>
+
+            <div class="code-display-box">
+                <span id="new-recovery-code">---</span>
+                <button id="copy-recovery-btn" class="icon-btn"><i class="fa-regular fa-copy"></i></button>
+            </div>
+
+            <p class="hint warning">⚠️ Notez-le ou copiez-le en lieu sûr MAINTENANT. Nous ne pourrons jamais vous le
+                redonner.</p>
+            <button id="confirm-recovery-saved-btn" class="primary-btn">J'ai bien sauvegardé ce code</button>
+        </section>
+
+        <!-- RECOVERY FLOW SECTION (Enter Code) -->
+        <section id="recovery-flow-section" class="glass-panel hidden">
+            <div class="logo-area">
+                <i class="fa-solid fa-life-ring"></i>
+                <h1>Récupération</h1>
+            </div>
+
+            <div id="step-recover-1">
+                <p class="subtitle">Entrez votre Code de Secours pour déverrouiller.</p>
+                <div class="input-group">
+                    <label>Code de Secours</label>
+                    <input type="text" id="recovery-code-input" placeholder="XXXX-XXXX-XXXX-XXXX">
+                </div>
+                <button id="recover-verify-btn" class="primary-btn">Vérifier le code</button>
+            </div>
+
+            <div id="step-recover-2" class="hidden">
+                <p class="subtitle">Code validé ! Choisissez un nouveau mot de passe.</p>
+                <div class="input-group">
+                    <label>Nouveau Mot de Passe Maître</label>
+                    <input type="password" id="new-master-password">
+                </div>
+                <button id="recover-reset-btn" class="primary-btn">Réinitialiser le mot de passe</button>
+            </div>
+
+            <button id="cancel-recovery-btn" class="secondary-btn">Annuler</button>
+        </section>
+
+        <!-- DASHBOARD SECTION -->
+        <section id="dashboard-section" class="glass-panel hidden">
+            <div class="dashboard-header">
+                <h2>Mon Coffre</h2>
+                <div class="header-actions">
+                    <button id="show-recovery-btn" class="icon-btn" title="Voir mon Code de Secours"
+                        style="color:#ffcc00"><i class="fa-solid fa-key"></i></button>
+                    <button id="export-btn" class="icon-btn" title="Sauvegarder (Export)"><i
+                            class="fa-solid fa-download"></i></button>
+                    <input type="file" id="import-file" accept=".json" style="display:none">
+                    <button id="import-btn" class="icon-btn" title="Restaurer (Import)"><i
+                            class="fa-solid fa-upload"></i></button>
+                    <button id="lock-btn" class="icon-btn" title="Verrouiller"><i class="fa-solid fa-lock"></i></button>
+                </div>
+            </div>
+
+            <!-- FILTERS -->
+            <div class="filters-bar">
+                <button class="filter-chip active" data-category="all">Tous</button>
+                <button class="filter-chip" data-category="Personnel">Personnel</button>
+                <button class="filter-chip" data-category="Travail">Travail</button>
+                <button class="filter-chip" data-category="Finance">Finance</button>
+                <button class="filter-chip" data-category="Social">Social</button>
+            </div>
+
+            <!-- GENERATOR WIDGET -->
+            <div class="generator-widget">
+                <h3>Générateur</h3>
+                <div class="password-display">
+                    <input type="text" id="generated-password" readonly placeholder="Générer...">
+                    <button id="copy-generated-btn" class="icon-btn"><i class="fa-regular fa-copy"></i></button>
+                    <button id="refresh-generated-btn" class="icon-btn"><i class="fa-solid fa-rotate"></i></button>
+                </div>
+                <div class="generator-controls">
+                    <label>Longueur: <span id="length-val">16</span></label>
+                    <input type="range" id="length-range" min="8" max="64" value="16">
+                    <div class="checkboxes">
+                        <label><input type="checkbox" id="use-uppercase" checked> ABC</label>
+                        <label><input type="checkbox" id="use-numbers" checked> 123</label>
+                        <label><input type="checkbox" id="use-symbols" checked> #!@</label>
+                    </div>
+                </div>
+                <button id="save-generated-btn" class="secondary-btn">Sauvegarder ce mot de passe</button>
+            </div>
+
+            <!-- SEARCH & ADD -->
+            <div class="actions-bar">
+                <div class="search-box">
+                    <i class="fa-solid fa-search"></i>
+                    <input type="text" id="search-input" placeholder="Rechercher...">
+                </div>
+                <button id="add-entry-btn" class="accent-btn"><i class="fa-solid fa-plus"></i> Nouveau</button>
+            </div>
+
+            <!-- PASSWORD LIST -->
+            <div class="entries-list" id="entries-list">
+                <!-- Entries will be injected here via JS -->
+            </div>
+        </section>
+    </div>
+
+    <!-- MODAL FOR ADDING/EDITING -->
+    <div id="entry-modal" class="modal hidden">
+        <div class="modal-content glass-panel">
+            <div class="modal-header">
+                <h3 id="modal-title">Ajouter un compte</h3>
+                <button id="close-modal" class="close-btn">&times;</button>
+            </div>
+            <form id="entry-form">
+                <input type="hidden" id="entry-id">
+                <div class="input-group">
+                    <label>Nom du service (ex: Google)</label>
+                    <input type="text" id="entry-title" required>
+                </div>
+                <div class="input-group">
+                    <label>Catégorie</label>
+                    <select id="entry-category">
+                        <option value="Autre">Autre</option>
+                        <option value="Personnel">Personnel</option>
+                        <option value="Travail">Travail</option>
+                        <option value="Finance">Finance</option>
+                        <option value="Social">Social</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label>Site Web (URL)</label>
+                    <input type="text" id="entry-url" placeholder="https://example.com">
+                </div>
+                <div class="input-group">
+                    <label>Identifiant / Email</label>
+                    <input type="text" id="entry-username">
+                </div>
+                <div class="input-group">
+                    <label>Mot de passe</label>
+                    <div class="password-input-wrapper">
+                        <input type="password" id="entry-password" required>
+                        <button type="button" id="toggle-entry-pw-visibility" class="icon-btn-small"><i
+                                class="fa-regular fa-eye"></i></button>
+                    </div>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" id="delete-entry-btn" class="danger-btn hidden">Supprimer</button>
+                    <button type="submit" class="primary-btn">Enregistrer</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+
+</html>
