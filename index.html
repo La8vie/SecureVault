@@ -138,18 +138,30 @@
                 <p id="health-message" class="health-message">Analyse en cours...</p>
             </div>
 
-            <!-- FILTERS -->
-            <div class="filters-bar">
-                <button class="filter-chip active" data-category="all">Tous</button>
-                <button class="filter-chip" data-category="Personnel">Personnel</button>
-                <button class="filter-chip" data-category="Travail">Travail</button>
-                <button class="filter-chip" data-category="Finance">Finance</button>
-                <button class="filter-chip" data-category="Social">Social</button>
+            <!-- STICKY HEADER (Filters + Search) -->
+            <div class="sticky-header-container">
+                <!-- FILTERS -->
+                <div class="filters-bar">
+                    <button class="filter-chip active" data-category="all">Tous</button>
+                    <button class="filter-chip" data-category="Personnel">Personnel</button>
+                    <button class="filter-chip" data-category="Travail">Travail</button>
+                    <button class="filter-chip" data-category="Finance">Finance</button>
+                    <button class="filter-chip" data-category="Social">Social</button>
+                </div>
+
+                <!-- SEARCH & ADD -->
+                <div class="actions-bar">
+                    <div class="search-box">
+                        <i class="fa-solid fa-search"></i>
+                        <input type="text" id="search-input" placeholder="Rechercher...">
+                    </div>
+                    <button id="add-entry-btn" class="accent-btn"><i class="fa-solid fa-plus"></i> Nouveau</button>
+                </div>
             </div>
 
-            <!-- GENERATOR WIDGET -->
-            <div class="generator-widget">
-                <h3>Générateur</h3>
+            <!-- GENERATOR WIDGET (Collapsible) -->
+            <details class="generator-widget" open>
+                <summary>Générateur de Mots de Passe</summary>
                 <div class="password-display">
                     <input type="text" id="generated-password" readonly placeholder="Générer...">
                     <button id="copy-generated-btn" class="icon-btn"><i class="fa-regular fa-copy"></i></button>
@@ -165,16 +177,7 @@
                     </div>
                 </div>
                 <button id="save-generated-btn" class="secondary-btn">Sauvegarder ce mot de passe</button>
-            </div>
-
-            <!-- SEARCH & ADD -->
-            <div class="actions-bar">
-                <div class="search-box">
-                    <i class="fa-solid fa-search"></i>
-                    <input type="text" id="search-input" placeholder="Rechercher...">
-                </div>
-                <button id="add-entry-btn" class="accent-btn"><i class="fa-solid fa-plus"></i> Nouveau</button>
-            </div>
+            </details>
 
             <!-- PASSWORD LIST -->
             <div class="entries-list" id="entries-list">
