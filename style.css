@@ -388,48 +388,64 @@ button:active {
 }
 
 .entry-item {
-    background: rgba(255, 255, 255, 0.03);
-    padding: 15px;
+    background: rgba(255, 255, 255, 0.05);
+    /* very light tint */
+    border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: 12px;
+    padding: 15px;
     display: flex;
-    justify-content: space-between;
     align-items: center;
+    gap: 15px;
+    /* Espacement entre icône, texte et badge */
     cursor: pointer;
-    transition: background 0.2s;
-    border: 1px solid transparent;
-    position: relative;
-    /* For security badge */
+    transition: all 0.3s;
+    overflow: hidden;
+    /* Prevent overflow */
 }
 
 .entry-item:hover {
-    background: rgba(255, 255, 255, 0.08);
-    border-color: rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.1);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
 }
 
 .entry-icon {
     width: 40px;
     height: 40px;
-    background: linear-gradient(135deg, #667eea55 0%, #764ba255 100%);
-    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 50%;
     display: flex;
-    align-items: center;
     justify-content: center;
+    align-items: center;
     font-size: 1.2rem;
-    margin-right: 15px;
+    color: var(--accent-color);
+    flex-shrink: 0;
+    /* Ne pas réduire l'icône */
 }
 
 .entry-details {
-    flex: 1;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    /* Important pour text-overflow dans flexbox */
 }
 
 .entry-title {
-    font-weight: 600;
-    display: block;
+    font-weight: bold;
+    font-size: 1rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .entry-username {
-    font-size: 0.8rem;
+    font-size: 0.85rem;
     color: var(--text-muted);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-top: 3px;
 }
 
 /* Modal */

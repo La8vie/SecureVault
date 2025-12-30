@@ -346,9 +346,13 @@ class UIManager {
     }
 
     applyTheme(themeName) {
-        document.body.className = ""; // Reset
-        if (this.isDiscrete) document.body.classList.add("discrete-mode"); // Keep discrete
-        if (themeName !== "neon") document.body.classList.add(`theme-${themeName}`);
+        // Remove existing theme classes
+        document.body.classList.remove("theme-ocean", "theme-matrix", "theme-light");
+
+        // Apply new theme if not default
+        if (themeName !== "neon") {
+            document.body.classList.add(`theme-${themeName}`);
+        }
     }
 
     calculateHealth() {
