@@ -209,6 +209,18 @@ class UIManager {
 
         this.initEventListeners();
         this.checkInitialState();
+
+        // --- Themes Init ---
+        // We need to define applyTheme first or hoist it, but it's a method so it's fine.
+        // However, we call this in constructor, but methods are defined later. That is fine in JS classes.
+        // Wait, to be safe, I'll put it in initEventListeners or just after checkInitialState.
+        const savedTheme = localStorage.getItem("secure_vault_theme") || "neon";
+        // Defer theme application slightly to ensure DOM is ready? No, DOM is ready.
+        // But I need to make sure applyTheme is defined. It is.
+        // Actually, let's just do it directly here to be sure, or better, in initDashboardLogic?
+        // No, constructor needs to set it.
+        if (savedTheme && savedTheme !== "neon") document.body.classList.add(`theme-${savedTheme}`);
+        // We set the select value later in initEventListeners or similar.
     }
 
     checkInitialState() {
@@ -229,12 +241,12 @@ class UIManager {
         // --- AUTH ---
         document.getElementById("unlock-btn").addEventListener("click", () => this.handleUnlock());
         this.masterPasswordInput.addEventListener("keypress", (e) => { if (e.key === "Enter") this.handleUnlock(); });
-        
+
         document.getElementById("reset-vault-btn").addEventListener("click", () => {
-             if(confirm("ATTENTION : Cela va SUPPRIMER définitivement votre coffre actuel et toutes ses données.\n\nÊtes-vous sûr de vouloir tout effacer pour recommencer à zéro ?")) {
-                 storageManager.clear();
-                 location.reload();
-             }
+            if (confirm("ATTENTION : Cela va SUPPRIMER définitivement votre coffre actuel et toutes ses données.\n\nÊtes-vous sûr de vouloir tout effacer pour recommencer à zéro ?")) {
+                storageManager.clear();
+                location.reload();
+            }
         });
 
         document.getElementById("forgot-password-link").addEventListener("click", (e) => {
@@ -314,8 +326,117 @@ class UIManager {
             if (this.isDiscrete) document.body.classList.add("discrete-mode");
         });
 
+        // --- Themes ---
+        const themeSelect = document.getElementById("theme-select");
+        if (themeSelect) {
+            // Set initial value from storage or default
+            themeSelect.value = localStorage.getItem("secure_vault_theme") || "neon";
+
+            // Apply immediately to be sure
+            this.applyTheme(themeSelect.value);
+
+            themeSelect.addEventListener("change", (e) => {
+                this.applyTheme(e.target.value);
+                localStorage.setItem("secure_vault_theme", e.target.value);
+            });
+        }
+
         // --- FILTERS & GENERATOR & MODAL (Same as v2 but hooked up) ---
         this.initDashboardLogic();
+    }
+
+    applyTheme(themeName) {
+        document.body.className = ""; // Reset
+        if (this.isDiscrete) document.body.classList.add("discrete-mode"); // Keep discrete
+        if (themeName !== "neon") document.body.classList.add(`theme-${themeName}`);
+    }
+
+    calculateHealth() {
+        if (this.entries.length === 0) return { score: 0, msg: "Ajoutez des mots de passe pour voir votre score." };
+
+        let totalScore = 0;
+        let reusedCount = 0;
+        const passwords = this.entries.map(e => e.password);
+
+        this.entries.forEach(entry => {
+            // Strength Score (0-3 -> map to 0-100)
+            const strength = SecurityAnalyzer.analyze(entry.password);
+            let s = 0;
+            if (strength === "strong") s = 100;
+            else if (strength === "medium") s = 60;
+            else s = 20;
+
+            totalScore += s;
+
+            // Reuse Check
+            if (passwords.filter(p => p === entry.password).length > 1) reusedCount++;
+        });
+
+        let avg = totalScore / this.entries.length;
+
+        // Malus for reuse
+        if (reusedCount > 0) avg -= (reusedCount * 5); // -5% per reused
+        if (avg < 0) avg = 0;
+
+        let msg = "Excellent !";
+        if (avg < 50) msg = "Attention : Mots de passe faibles ou réutilisés.";
+        else if (avg < 80) msg = "Bien, mais peut être amélioré.";
+
+        return { score: Math.round(avg), msg };
+    }
+
+    updateHealthWidget() {
+        const health = this.calculateHealth();
+        document.getElementById("health-score-text").textContent = `${health.score}%`;
+        document.getElementById("health-message").textContent = health.msg;
+
+        const bar = document.getElementById("health-bar-fill");
+        bar.style.width = `${health.score}%`;
+
+        bar.className = "health-bar-fill"; // reset
+        if (health.score < 50) bar.classList.add("health-danger");
+        else if (health.score < 80) bar.classList.add("health-warning");
+        else bar.classList.add("health-good");
+    }
+
+    applyTheme(themeName) {
+        document.body.className = ""; // Reset
+        if (this.isDiscrete) document.body.classList.add("discrete-mode");
+        if (themeName !== "neon") document.body.classList.add(`theme-${themeName}`);
+    }
+
+    calculateHealth() {
+        if (this.entries.length === 0) return { score: 0, msg: "Ajoutez des mots de passe pour voir votre score." };
+        let totalScore = 0;
+        let reusedCount = 0;
+        const passwords = this.entries.map(e => e.password);
+        this.entries.forEach(entry => {
+            const strength = SecurityAnalyzer.analyze(entry.password);
+            let s = 20;
+            if (strength === "strong") s = 100;
+            else if (strength === "medium") s = 60;
+            totalScore += s;
+            if (passwords.filter(p => p === entry.password && e.id !== entry.id).length > 0) reusedCount++; // Fix reuse logic slightly
+        });
+        let avg = totalScore / this.entries.length;
+        if (reusedCount > 0) avg -= (reusedCount * 2); // Less penalty to not crush score
+        if (avg < 0) avg = 0;
+        let msg = "Excellent !";
+        if (avg < 50) msg = "Attention : Mots de passe faibles ou réutilisés.";
+        else if (avg < 80) msg = "Bien, mais peut être amélioré.";
+        return { score: Math.round(avg), msg };
+    }
+
+    updateHealthWidget() {
+        const health = this.calculateHealth();
+        document.getElementById("health-score-text").textContent = `${health.score}%`;
+        document.getElementById("health-message").textContent = health.msg;
+        const bar = document.getElementById("health-bar-fill");
+        bar.style.width = `${health.score}%`;
+        bar.className = "health-bar-fill";
+        if (health.score < 50) bar.classList.add("health-danger");
+        else if (health.score < 80) bar.classList.add("health-warning");
+        else bar.classList.add("health-good");
     }
 
     initDashboardLogic() {
@@ -595,9 +716,8 @@ class UIManager {
     }
 
     renderEntries(filter = "") {
-        // ... (Same rendering logic as v2) ...
         this.entriesList.innerHTML = "";
-        let filtered = this.entries; // this.entries is set during unlock
+        let filtered = this.entries;
 
         if (this.currentFilter !== "all") {
             filtered = filtered.filter(e => e.category === this.currentFilter);
@@ -609,6 +729,7 @@ class UIManager {
 
         if (filtered.length === 0) {
             this.entriesList.innerHTML = '<p style="text-align:center;color:var(--text-muted);padding:20px;">Aucun.</p>';
+            this.updateHealthWidget();
             return;
         }
 
@@ -618,6 +739,7 @@ class UIManager {
             const strength = SecurityAnalyzer.analyze(entry.password);
             const isReused = SecurityAnalyzer.checkReuse(entry.password, this.entries, entry.id);
             const badgeClass = `security-${strength}`;
+
             div.innerHTML = `
                 <div class="entry-icon"><i class="fa-solid fa-key"></i></div>
                 <div class="entry-details">
@@ -635,6 +757,8 @@ class UIManager {
             div.addEventListener("click", () => this.openModal(entry));
             this.entriesList.appendChild(div);
         });
+
+        this.updateHealthWidget();
     }
 
     // Modal Helpers

@@ -45,8 +45,11 @@
             </div>
 
             <button id="unlock-btn" class="primary-btn">Déverrouiller / Créer</button>
-            <button id="reset-vault-btn" class="secondary-btn hidden" style="margin-top: 15px; border-color: #ff3b30; color: #ff3b30;">Supprimer et Créer un nouveau coffre</button>
-            <p class="hint">Si c'est votre première visite, ce mot de passe servira à créer votre coffre. Ne l'oubliez pas !</p>
+            <button id="reset-vault-btn" class="secondary-btn hidden"
+                style="margin-top: 15px; border-color: #ff3b30; color: #ff3b30;">Supprimer et Créer un nouveau
+                coffre</button>
+            <p class="hint">Si c'est votre première visite, ce mot de passe servira à créer votre coffre. Ne l'oubliez
+                pas !</p>
             <a href="#" id="forgot-password-link" class="link-btn hidden">Mot de passe oublié ?</a>
         </section>
 
@@ -103,6 +106,15 @@
             <div class="dashboard-header">
                 <h2>Mon Coffre</h2>
                 <div class="header-actions">
+                    <select id="theme-select" title="Changer de thème"
+                        style="width: auto; padding: 5px 10px; height: 35px; margin-right: 5px;">
+                        <option value="neon">🟣 Néon (Défaut)</option>
+                        <option value="ocean">🌊 Océan</option>
+                        <option value="matrix">💻 Hacker</option>
+                        <option value="light">☀️ Jour</option>
+                    </select>
+                    <button id="discrete-btn" class="icon-btn" title="Mode Discret (Flouter)"><i
+                            class="fa-regular fa-eye-slash"></i></button>
                     <button id="show-recovery-btn" class="icon-btn" title="Voir mon Code de Secours"
                         style="color:#ffcc00"><i class="fa-solid fa-key"></i></button>
                     <button id="export-btn" class="icon-btn" title="Sauvegarder (Export)"><i
@@ -112,6 +124,18 @@
                             class="fa-solid fa-upload"></i></button>
                     <button id="lock-btn" class="icon-btn" title="Verrouiller"><i class="fa-solid fa-lock"></i></button>
                 </div>
+            </div>
+
+            <!-- SECURITY HEALTH WIDGET -->
+            <div class="health-widget">
+                <div class="health-header">
+                    <span>Santé du Coffre</span>
+                    <span id="health-score-text">0%</span>
+                </div>
+                <div class="health-bar-container">
+                    <div id="health-bar-fill" class="health-bar-fill" style="width: 0%"></div>
+                </div>
+                <p id="health-message" class="health-message">Analyse en cours...</p>
             </div>
 
             <!-- FILTERS -->

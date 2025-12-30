@@ -1,4 +1,5 @@
 :root {
+    /* Default (Neon) */
     --bg-color: #0f0c29;
     --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     --accent-color: #00d2ff;
@@ -7,6 +8,41 @@
     --glass-bg: rgba(255, 255, 255, 0.05);
     --glass-border: rgba(255, 255, 255, 0.1);
     --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+    --card-bg: rgba(255, 255, 255, 0.03);
+    --card-hover: rgba(255, 255, 255, 0.08);
+}
+
+/* Themes */
+body.theme-ocean {
+    --bg-color: #001f3f;
+    --primary-gradient: linear-gradient(135deg, #0074D9 0%, #7FDBFF 100%);
+    --accent-color: #39CCCC;
+    --glass-bg: rgba(255, 255, 255, 0.1);
+}
+
+body.theme-matrix {
+    --bg-color: #000000;
+    --primary-gradient: linear-gradient(135deg, #003300 0%, #00FF00 100%);
+    --accent-color: #00FF00;
+    --text-color: #00FF00;
+    --text-muted: #00aa00;
+    --glass-border: rgba(0, 255, 0, 0.3);
+    --card-bg: rgba(0, 50, 0, 0.3);
+    --card-hover: rgba(0, 100, 0, 0.3);
+    font-family: 'Courier New', monospace;
+}
+
+body.theme-light {
+    --bg-color: #f0f2f5;
+    --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    --accent-color: #667eea;
+    --text-color: #1a1a1a;
+    --text-muted: #666666;
+    --glass-bg: rgba(255, 255, 255, 0.8);
+    --glass-border: rgba(0, 0, 0, 0.1);
+    --glass-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    --card-bg: rgba(255, 255, 255, 0.6);
+    --card-hover: rgba(255, 255, 255, 0.9);
 }
 
 * {
