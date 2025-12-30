@@ -287,9 +287,23 @@ button:active {
 /* Dashboard */
 .dashboard-header {
     display: flex;
+    flex-wrap: wrap;
+    /* Allow wrapping */
     justify-content: space-between;
     align-items: center;
     margin-bottom: 25px;
+    gap: 15px;
+    /* Add gap for wrapping */
+}
+
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    flex-wrap: wrap;
+    /* Buttons wrap on very small screens */
+    margin-left: auto;
+    /* Push to right but respect wrap */
 }
 
 .generator-widget {
